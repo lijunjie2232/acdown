@@ -3,7 +3,7 @@ name = "acdown-client"
 version = "0.1.0"
 description = "A command-line download client for ACDown Server with chunked, authenticated downloads"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.9"
 dependencies = [
     "typer>=0.9.0",
     "rich>=13.7.0",
