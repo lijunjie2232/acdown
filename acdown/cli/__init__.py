@@ -1,5 +1,5 @@
 """CLI module for ACDown Client."""
 
-from acdown.cli.cli import main
+from acdown.cli.cli import app
 
-__all__ = ["main"]
+__all__ = ["app"]
