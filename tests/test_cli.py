@@ -14,8 +14,8 @@ runner = CliRunner()
 class TestDownloadCommand:
     """Test the download command."""
 
-    @patch('acdown.cli.AuthManager')
-    @patch('acdown.cli.Downloader')
+    @patch('acdown.cli.cli.AuthManager')
+    @patch('acdown.cli.cli.Downloader')
     def test_download_success(self, mock_downloader_class, mock_auth_class):
         """Test successful download."""
         # Setup mocks
@@ -48,7 +48,7 @@ class TestDownloadCommand:
         assert result.exit_code == 0
         assert "Download complete" in result.stdout
 
-    @patch('acdown.cli.AuthManager')
+    @patch('acdown.cli.cli.AuthManager')
     def test_download_no_server_url(self, mock_auth_class):
         """Test download when server URL not configured."""
         mock_auth = MagicMock()
@@ -60,7 +60,7 @@ class TestDownloadCommand:
         assert result.exit_code == 1
         assert "Server URL not configured" in result.stdout
 
-    @patch('acdown.cli.AuthManager')
+    @patch('acdown.cli.cli.AuthManager')
     def test_download_invalid_url(self, mock_auth_class):
         """Test download with invalid URL."""
         mock_auth = MagicMock()
@@ -72,7 +72,7 @@ class TestDownloadCommand:
         assert result.exit_code == 1
         assert "Invalid URL" in result.stdout
 
-    @patch('acdown.cli.AuthManager')
+    @patch('acdown.cli.cli.AuthManager')
     def test_download_not_authenticated(self, mock_auth_class):
         """Test download without authentication."""
         mock_auth = MagicMock()
@@ -85,8 +85,8 @@ class TestDownloadCommand:
         assert result.exit_code == 1
         assert "Not authenticated" in result.stdout
 
-    @patch('acdown.cli.AuthManager')
-    @patch('acdown.cli.Downloader')
+    @patch('acdown.cli.cli.AuthManager')
+    @patch('acdown.cli.cli.Downloader')
     def test_download_with_options(self, mock_downloader_class, mock_auth_class):
         """Test download with custom options."""
         mock_auth = MagicMock()
@@ -132,7 +132,7 @@ class TestDownloadCommand:
 class TestAuthCommand:
     """Test the auth command."""
 
-    @patch('acdown.cli.AuthManager')
+    @patch('acdown.cli.cli.AuthManager')
     def test_auth_success(self, mock_auth_class):
         """Test successful authentication."""
         mock_auth = MagicMock()
@@ -150,7 +150,7 @@ class TestAuthCommand:
         assert result.exit_code == 0
         assert "Authentication successful" in result.stdout
 
-    @patch('acdown.cli.AuthManager')
+    @patch('acdown.cli.cli.AuthManager')
     def test_auth_no_server_url(self, mock_auth_class):
         """Test auth when server URL not configured."""
         mock_auth = MagicMock()
@@ -162,7 +162,7 @@ class TestAuthCommand:
         assert result.exit_code == 1
         assert "Server URL not configured" in result.stdout
 
-    @patch('acdown.cli.AuthManager')
+    @patch('acdown.cli.cli.AuthManager')
     def test_auth_failure(self, mock_auth_class):
         """Test authentication failure."""
         mock_auth = MagicMock()
@@ -183,7 +183,7 @@ class TestAuthCommand:
 class TestConfigCommand:
     """Test the config command."""
 
-    @patch('acdown.cli.AuthManager')
+    @patch('acdown.cli.cli.AuthManager')
     def test_config_set_success(self, mock_auth_class):
         """Test setting configuration."""
         mock_auth = MagicMock()
@@ -195,7 +195,7 @@ class TestConfigCommand:
         assert "Configuration updated" in result.stdout
         mock_auth.set_config.assert_called_once_with('server_url', 'http://example.com:3000')
 
-    @patch('acdown.cli.AuthManager')
+    @patch('acdown.cli.cli.AuthManager')
     def test_config_set_missing_args(self, mock_auth_class):
         """Test config set with missing arguments."""
         mock_auth = MagicMock()
@@ -206,7 +206,7 @@ class TestConfigCommand:
         assert result.exit_code == 1
         assert "Usage:" in result.stdout
 
-    @patch('acdown.cli.AuthManager')
+    @patch('acdown.cli.cli.AuthManager')
     def test_config_set_invalid_key(self, mock_auth_class):
         """Test config set with invalid key."""
         mock_auth = MagicMock()
@@ -217,7 +217,7 @@ class TestConfigCommand:
         assert result.exit_code == 1
         assert "Invalid key" in result.stdout
 
-    @patch('acdown.cli.AuthManager')
+    @patch('acdown.cli.cli.AuthManager')
     def test_config_get_all(self, mock_auth_class):
         """Test getting all configuration."""
         mock_auth = MagicMock()
@@ -236,7 +236,7 @@ class TestConfigCommand:
         assert "server_url" in result.stdout
         assert "parallel" in result.stdout
 
-    @patch('acdown.cli.AuthManager')
+    @patch('acdown.cli.cli.AuthManager')
     def test_config_get_specific_key(self, mock_auth_class):
         """Test getting specific configuration value."""
         mock_auth = MagicMock()
@@ -249,7 +249,7 @@ class TestConfigCommand:
         assert "server_url" in result.stdout
         assert "http://test-server:3000" in result.stdout
 
-    @patch('acdown.cli.AuthManager')
+    @patch('acdown.cli.cli.AuthManager')
     def test_config_invalid_action(self, mock_auth_class):
         """Test config with invalid action."""
         mock_auth = MagicMock()
@@ -264,7 +264,7 @@ class TestConfigCommand:
 class TestLogoutCommand:
     """Test the logout command."""
 
-    @patch('acdown.cli.AuthManager')
+    @patch('acdown.cli.cli.AuthManager')
     def test_logout_success(self, mock_auth_class):
         """Test successful logout."""
         mock_auth = MagicMock()
@@ -276,7 +276,7 @@ class TestLogoutCommand:
         assert "Logged out successfully" in result.stdout
         mock_auth.logout.assert_called_once()
 
-    @patch('acdown.cli.AuthManager')
+    @patch('acdown.cli.cli.AuthManager')
     def test_logout_failure(self, mock_auth_class):
         """Test logout failure."""
         mock_auth = MagicMock()
@@ -332,8 +332,8 @@ class TestHelpAndUsage:
 class TestEdgeCases:
     """Test edge cases and error handling."""
 
-    @patch('acdown.cli.AuthManager')
-    @patch('acdown.cli.Downloader')
+    @patch('acdown.cli.cli.AuthManager')
+    @patch('acdown.cli.cli.Downloader')
     def test_download_exception_handling(self, mock_downloader_class, mock_auth_class):
         """Test download with exception during download."""
         mock_auth = MagicMock()
@@ -362,7 +362,7 @@ class TestEdgeCases:
         assert "Download failed" in result.stdout
         assert "Network error" in result.stdout
 
-    @patch('acdown.cli.AuthManager')
+    @patch('acdown.cli.cli.AuthManager')
     def test_config_set_exception_handling(self, mock_auth_class):
         """Test config set with exception."""
         mock_auth = MagicMock()

@@ -88,7 +88,10 @@ class TestAnalyzeFile:
             mock_client.post.assert_called_once_with(
                 'http://test-server:3000/api/proxy/analyze',
                 json={'url': 'https://example.com/file.zip'},
-                headers={'x-auth-token': 'token123'}
+                headers={
+                    'x-auth-token': 'token123',
+                    'Authorization': 'Bearer token123'
+                }
             )
 
     @pytest.mark.asyncio
@@ -250,7 +253,8 @@ class TestDownloadParts:
             return part_file
         
         with patch.object(downloader, 'download_part', side_effect=mock_download_part):
-            with patch('acdown.downloader.ProgressTracker'):
+            with patch('acdown.downloader.downloader.ProgressTracker'
+):
                 part_files = await downloader.download_parts(
                     parts,
                     'token123',
@@ -286,7 +290,8 @@ class TestDownloadParts:
         mock_tracker = MagicMock()
         
         with patch.object(downloader, 'download_part', side_effect=mock_download_part):
-            with patch('acdown.downloader.ProgressTracker', return_value=mock_tracker):
+            with patch('acdown.downloader.downloader.ProgressTracker'
+, return_value=mock_tracker):
                 await downloader.download_parts(
                     parts,
                     'token123',

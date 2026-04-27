@@ -16,14 +16,14 @@ class TestAuthManagerInit:
 
     def test_init_creates_app_dir(self, temp_dir):
         """Test that AuthManager initializes with correct directory."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             assert auth.app_dir == temp_dir
             assert auth.data_file == temp_dir / 'data.bin'
 
     def test_default_config_values(self, temp_dir):
         """Test default configuration values."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             assert auth.default_config['server_url'] == ''
             assert auth.default_config['parallel'] == 3
@@ -36,7 +36,7 @@ class TestBinarySerialization:
 
     def test_encrypt_decrypt_roundtrip(self, temp_dir, mock_auth_data):
         """Test that encrypt and decrypt are inverse operations."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             config = mock_auth_data['config']
@@ -55,7 +55,7 @@ class TestBinarySerialization:
 
     def test_encrypt_data_format(self, temp_dir):
         """Test binary format structure."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             config = {'test': 'value'}
@@ -84,7 +84,7 @@ class TestBinarySerialization:
 
     def test_decrypt_invalid_data(self, temp_dir):
         """Test decryption of invalid/corrupted data."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             with pytest.raises(Exception):
@@ -96,7 +96,7 @@ class TestDataPersistence:
 
     def test_save_and_load_data(self, temp_dir, mock_auth_data):
         """Test complete save and load cycle."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             config = mock_auth_data['config']
@@ -118,7 +118,7 @@ class TestDataPersistence:
 
     def test_load_nonexistent_file(self, temp_dir):
         """Test loading when data file doesn't exist."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             with pytest.raises(FileNotFoundError):
@@ -126,7 +126,7 @@ class TestDataPersistence:
 
     def test_file_permissions(self, temp_dir):
         """Test that saved file has restrictive permissions."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             auth._save_data({}, 'token', 0)
@@ -142,7 +142,7 @@ class TestLogin:
     @pytest.mark.asyncio
     async def test_login_success(self, temp_dir):
         """Test successful login with TOTP code."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             # Set server URL first
@@ -174,7 +174,7 @@ class TestLogin:
     @pytest.mark.asyncio
     async def test_login_no_server_url(self, temp_dir):
         """Test login fails when server URL not configured."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             with pytest.raises(Exception) as exc_info:
@@ -185,7 +185,7 @@ class TestLogin:
     @pytest.mark.asyncio
     async def test_login_failure(self, temp_dir):
         """Test login with invalid credentials."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             auth.set_config('server_url', 'http://test-server:3000')
             
@@ -219,7 +219,7 @@ class TestTokenValidation:
 
     def test_is_token_valid_with_valid_token(self, temp_dir, mock_auth_data):
         """Test validation of non-expired token."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             # Save valid token
@@ -233,7 +233,7 @@ class TestTokenValidation:
 
     def test_is_token_valid_with_expired_token(self, temp_dir):
         """Test validation of expired token."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             # Save expired token (past timestamp)
@@ -244,14 +244,14 @@ class TestTokenValidation:
 
     def test_is_token_valid_with_empty_token(self, temp_dir):
         """Test validation when no token exists."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             assert auth.is_token_valid() is False
 
     def test_is_token_valid_no_file(self, temp_dir):
         """Test validation when data file doesn't exist."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             assert auth.is_token_valid() is False
@@ -262,7 +262,7 @@ class TestConfiguration:
 
     def test_set_and_get_config(self, temp_dir):
         """Test setting and retrieving configuration values."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             # Set various config values
@@ -279,7 +279,7 @@ class TestConfiguration:
 
     def test_config_type_conversion(self, temp_dir):
         """Test automatic type conversion for config values."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             # Test parallel (int conversion)
@@ -296,7 +296,7 @@ class TestConfiguration:
 
     def test_get_full_config_with_defaults(self, temp_dir):
         """Test getting full config merged with defaults."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             # Set only one value
@@ -311,7 +311,7 @@ class TestConfiguration:
 
     def test_get_config_no_file(self, temp_dir):
         """Test getting config when no file exists."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             config = auth.get_config()
@@ -320,7 +320,7 @@ class TestConfiguration:
 
     def test_get_config_value_default(self, temp_dir):
         """Test getting individual config value with default."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             # Not set, should return default
@@ -333,7 +333,7 @@ class TestServerURL:
 
     def test_is_server_url_configured_true(self, temp_dir):
         """Test when server URL is configured."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             auth.set_config('server_url', 'http://server.com:3000')
             
@@ -341,14 +341,14 @@ class TestServerURL:
 
     def test_is_server_url_configured_false_empty(self, temp_dir):
         """Test when server URL is empty."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             assert auth.is_server_url_configured() is False
 
     def test_is_server_url_configured_false_whitespace(self, temp_dir):
         """Test when server URL is only whitespace."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             auth.set_config('server_url', '   ')
             
@@ -360,7 +360,7 @@ class TestLogout:
 
     def test_logout_clears_token_keeps_config(self, temp_dir):
         """Test that logout clears token but preserves config."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             # Set config and token
@@ -385,7 +385,7 @@ class TestLogout:
 
     def test_logout_no_file(self, temp_dir):
         """Test logout when no data file exists."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             # Should not raise exception
@@ -397,7 +397,7 @@ class TestGetToken:
 
     def test_get_token_valid(self, temp_dir, mock_auth_data):
         """Test getting a valid token."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             auth._save_data(
@@ -410,7 +410,7 @@ class TestGetToken:
 
     def test_get_token_no_file(self, temp_dir):
         """Test getting token when file doesn't exist."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             assert auth.get_token() == ''

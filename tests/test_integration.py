@@ -16,7 +16,7 @@ class TestAuthenticationWorkflow:
     @pytest.mark.asyncio
     async def test_full_auth_workflow(self, temp_dir):
         """Test complete authentication flow from setup to validation."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             # Initially no server URL configured
@@ -113,7 +113,7 @@ class TestConfigPersistence:
 
     def test_config_persists_across_instances(self, temp_dir):
         """Test that config persists when creating new AuthManager instances."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             # First instance - set config
             auth1 = AuthManager()
             auth1.set_config('server_url', 'http://persistent-server:3000')
@@ -174,7 +174,8 @@ class TestErrorRecovery:
                     'encrypted_params',
                     'token',
                     0,
-                    temp_dir
+                    temp_dir,
+                    'test.zip'
                 )
                 
                 assert part_file.exists()
@@ -182,7 +183,7 @@ class TestErrorRecovery:
 
     def test_graceful_handling_of_corrupted_data(self, temp_dir):
         """Test graceful handling of corrupted data file."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             # Write corrupted data
@@ -230,7 +231,8 @@ class TestConcurrentDownloads:
                     'token',
                     temp_dir,
                     500,  # total_size
-                    5     # total_parts
+                    5,     # total_parts
+                    'test.zip'
                 )
                 
                 assert len(part_files) == 5
@@ -246,7 +248,7 @@ class TestDataIntegrity:
 
     def test_binary_serialization_integrity(self, temp_dir):
         """Test that binary serialization preserves data integrity."""
-        with patch('acdown.auth.get_app_data_dir', return_value=temp_dir):
+        with patch('acdown.auth.auth.get_app_data_dir', return_value=temp_dir):
             auth = AuthManager()
             
             test_configs = [

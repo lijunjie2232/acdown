@@ -37,7 +37,7 @@ class TestProgressBar:
         """Test progress bar initialization."""
         tracker = ProgressTracker(1048576, 2)
         
-        with patch('acdown.progress.Progress') as mock_progress_class:
+        with patch('acdown.progress.progress.Progress') as mock_progress_class:
             mock_progress = MagicMock()
             mock_progress_class.return_value = mock_progress
             
@@ -56,7 +56,7 @@ class TestProgressBar:
         """Test progress bar cleanup."""
         tracker = ProgressTracker(1048576, 2)
         
-        with patch('acdown.progress.Progress') as mock_progress_class:
+        with patch('acdown.progress.progress.Progress') as mock_progress_class:
             mock_progress = MagicMock()
             mock_progress_class.return_value = mock_progress
             
@@ -80,7 +80,7 @@ class TestProgressUpdates:
         """Test basic progress update."""
         tracker = ProgressTracker(1000, 2)
         
-        with patch('acdown.progress.Progress') as mock_progress_class:
+        with patch('acdown.progress.progress.Progress') as mock_progress_class:
             mock_progress = MagicMock()
             mock_progress_class.return_value = mock_progress
             
@@ -98,7 +98,7 @@ class TestProgressUpdates:
         """Test multiple progress updates accumulate correctly."""
         tracker = ProgressTracker(1000, 2)
         
-        with patch('acdown.progress.Progress') as mock_progress_class:
+        with patch('acdown.progress.progress.Progress') as mock_progress_class:
             mock_progress = MagicMock()
             mock_progress_class.return_value = mock_progress
             
@@ -117,7 +117,7 @@ class TestProgressUpdates:
         """Test progress update with part number (legacy mode)."""
         tracker = ProgressTracker(1000, 3)
         
-        with patch('acdown.progress.Progress') as mock_progress_class:
+        with patch('acdown.progress.progress.Progress') as mock_progress_class:
             mock_progress = MagicMock()
             mock_progress_class.return_value = mock_progress
             
@@ -132,7 +132,7 @@ class TestProgressUpdates:
         """Test start_part method updates description and resets progress."""
         tracker = ProgressTracker(1000, 4, show_individual=True)
         
-        with patch('acdown.progress.Progress') as mock_progress_class:
+        with patch('acdown.progress.progress.Progress') as mock_progress_class:
             mock_progress = MagicMock()
             mock_progress_class.return_value = mock_progress
             
@@ -274,7 +274,7 @@ class TestIndividualProgressBars:
         """Test initialization with multiple thread progress bars."""
         tracker = ProgressTracker(1048576, 4, show_individual=True)
         
-        with patch('acdown.progress.Progress') as mock_progress_class:
+        with patch('acdown.progress.progress.Progress') as mock_progress_class:
             mock_progress = MagicMock()
             mock_progress_class.return_value = mock_progress
             
@@ -291,7 +291,7 @@ class TestIndividualProgressBars:
         """Test updating progress for specific thread."""
         tracker = ProgressTracker(1000, 4, show_individual=True)
         
-        with patch('acdown.progress.Progress') as mock_progress_class:
+        with patch('acdown.progress.progress.Progress') as mock_progress_class:
             mock_progress = MagicMock()
             mock_progress_class.return_value = mock_progress
             
@@ -312,7 +312,7 @@ class TestIndividualProgressBars:
         """Test updating progress for multiple threads simultaneously."""
         tracker = ProgressTracker(1000, 4, show_individual=True)
         
-        with patch('acdown.progress.Progress') as mock_progress_class:
+        with patch('acdown.progress.progress.Progress') as mock_progress_class:
             mock_progress = MagicMock()
             mock_progress_class.return_value = mock_progress
             
@@ -333,7 +333,7 @@ class TestIndividualProgressBars:
         """Test that thread_id is ignored when show_individual is False."""
         tracker = ProgressTracker(1000, 4, show_individual=False)
         
-        with patch('acdown.progress.Progress') as mock_progress_class:
+        with patch('acdown.progress.progress.Progress') as mock_progress_class:
             mock_progress = MagicMock()
             mock_progress_class.return_value = mock_progress
             
@@ -355,7 +355,7 @@ class TestIntegration:
         total_parts = 4
         tracker = ProgressTracker(total_size, total_parts)
         
-        with patch('acdown.progress.Progress') as mock_progress_class:
+        with patch('acdown.progress.progress.Progress') as mock_progress_class:
             mock_progress = MagicMock()
             mock_progress_class.return_value = mock_progress
             
@@ -385,7 +385,7 @@ class TestIntegration:
         """Test progress tracking with non-uniform chunk sizes."""
         tracker = ProgressTracker(1000, 3)
         
-        with patch('acdown.progress.Progress') as mock_progress_class:
+        with patch('acdown.progress.progress.Progress') as mock_progress_class:
             mock_progress = MagicMock()
             mock_progress_class.return_value = mock_progress
             
