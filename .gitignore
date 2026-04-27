@@ -1,0 +1,40 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+venv/
+env/
+
+# ACDown Client specific
+# Note: data.bin is now stored in system app data directory
+# Linux: ~/.local/share/acdown/data.bin
+# macOS: ~/Library/Application Support/acdown/data.bin
+# Windows: C:\Users\<user>\AppData\Local\acdown\data.bin
+config.toml
+*.tmp
+part_*.tmp
+downloads/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS
+.DS_Store
+Thumbs.db
+
+venv/

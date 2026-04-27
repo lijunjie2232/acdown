@@ -1,0 +1,26 @@
+# ACDown Client Configuration Example
+# Copy this file to config.toml and modify as needed
+
+[server]
+# Server URL
+url = "http://localhost:3000"
+
+[download]
+# Number of concurrent downloads
+parallel = 3
+
+# Default output directory
+output = "./downloads"
+
+# Enable verbose logging
+verbose = false
+
+[advanced]
+# Maximum retry attempts
+max_retries = 3
+
+# Timeout in seconds for each request
+timeout = 60
+
+# Chunk size for streaming (bytes)
+chunk_size = 65536
