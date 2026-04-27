@@ -134,7 +134,6 @@ class AuthManager:
                 data = response.json()['data']
                 # Save both config and token
                 self._save_data(config, data['token'], data['expiresAt'])
-                print(data)
                 return data
             else:
                 error_msg = response.text
