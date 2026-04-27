@@ -123,7 +123,10 @@ class AuthManager:
             Exception: If authentication fails
         """
         config = self.get_config()
-        base_url = config.get('server_url', self.default_config['server_url'])
+        base_url = config.get('server_url', '').strip()
+        
+        if not base_url:
+            raise Exception("Server URL not configured")
         
         async with httpx.AsyncClient() as client:
             response = await client.post(
