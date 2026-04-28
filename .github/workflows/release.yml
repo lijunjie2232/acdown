@@ -32,8 +32,15 @@ jobs:
     - name: Generate changelog
       id: changelog
       run: |
+        # Get the previous tag, or empty if it doesn't exist
+        PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+        
         echo "changelog<<EOF" >> $GITHUB_OUTPUT
-        git log $(git describe --tags --abbrev=0 HEAD^)..HEAD --pretty=format:"- %s (%h)" >> $GITHUB_OUTPUT
+        if [ -z "$PREVIOUS_TAG" ]; then
+          git log --pretty=tformat:"- %s (%h)" >> $GITHUB_OUTPUT
+        else
+          git log "$PREVIOUS_TAG..HEAD" --pretty=tformat:"- %s (%h)" >> $GITHUB_OUTPUT
+        fi
         echo "EOF" >> $GITHUB_OUTPUT
     
     - name: Create GitHub Release
