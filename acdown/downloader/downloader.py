@@ -147,7 +147,8 @@ class Downloader:
                            part_index: int, output_dir: Path,
                            base_filename: str,
                            progress_tracker: Optional[ProgressTracker] = None,
-                           thread_id: int = 0) -> Path:
+                           thread_id: int = 0,
+                           expected_size: int = 0) -> Path:
         """Download single part with retry logic.
         
         Args:
@@ -158,6 +159,7 @@ class Downloader:
             base_filename: Base name of the final file for tmp naming
             progress_tracker: Optional progress tracker to update
             thread_id: ID of the thread downloading this part (0-indexed)
+            expected_size: Expected size of this part in bytes
             
         Returns:
             Path to downloaded part file
@@ -165,7 +167,21 @@ class Downloader:
         Raises:
             Exception: If download fails after all retries
         """
-        part_file = output_dir / f'{base_filename}.tmp.{part_index}'
+        part_file = output_dir / f'{base_filename}.{part_index}'
+        tmp_file = output_dir / f'{base_filename}.{part_index}.tmp'
+        
+        # Continuous download check: if part already exists and has correct size, skip
+        if expected_size > 0 and part_file.exists():
+            actual_size = part_file.stat().st_size
+            if actual_size == expected_size:
+                if self.verbose:
+                    self.logger.debug(f"Part {part_index + 1} already exists with correct size ({actual_size}), skipping.")
+                if progress_tracker:
+                    progress_tracker.update_progress(expected_size, part_index + 1, thread_id)
+                return part_file
+            else:
+                if self.verbose:
+                    self.logger.debug(f"Part {part_index + 1} exists but size mismatch (expected {expected_size}, got {actual_size}). Re-downloading.")
         
         for attempt in range(1, self.max_retries + 1):
             try:
@@ -181,15 +197,23 @@ class Downloader:
                         headers=headers
                     ) as response:
                         if response.status_code == 206 or response.status_code == 200:
-                            with open(part_file, 'wb') as f:
+                            with open(tmp_file, 'wb') as f:
                                 async for chunk in response.aiter_bytes(chunk_size=65536):
                                     f.write(chunk)
                                     if progress_tracker:
                                         progress_tracker.update_progress(len(chunk), part_index + 1, thread_id)
+                            
+                            # Rename to complete part name
+                            if part_file.exists():
+                                part_file.unlink()
+                            tmp_file.rename(part_file)
                             return part_file
                         else:
                             raise Exception(f"HTTP {response.status_code}")
             except Exception as e:
+                # Cleanup tmp file on failure if it exists
+                if tmp_file.exists():
+                    tmp_file.unlink()
                 if attempt == self.max_retries:
                     raise e
                 if self.verbose:
@@ -232,7 +256,7 @@ class Downloader:
                 # Acquire a thread ID
                 thread_id = await thread_id_queue.get()
                 try:
-                    # Calculate part size for the progress bar
+                    # Calculate part size for the progress bar and continuous download check
                     current_part_size = chunk_size
                     if index == total_parts - 1 and chunk_size > 0:
                         current_part_size = total_size - (chunk_size * (total_parts - 1))
@@ -243,7 +267,8 @@ class Downloader:
                         
                     return await self.download_part(
                         part, token, index, output_dir, base_filename,
-                        progress_tracker, thread_id=thread_id
+                        progress_tracker, thread_id=thread_id,
+                        expected_size=current_part_size
                     )
                 finally:
                     # Release the thread ID back to the pool

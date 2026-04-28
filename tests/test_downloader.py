@@ -152,12 +152,38 @@ class TestDownloadPart:
                 'token123',
                 0,
                 temp_dir,
-                'test.zip'
+                'test.zip',
+                expected_size=12  # chunk1chunk2 length
             )
             
             assert part_file.exists()
-            assert part_file.name == 'test.zip.tmp.0'
+            assert part_file.name == 'test.zip.0'
             assert part_file.read_bytes() == b'chunk1chunk2'
+
+    @pytest.mark.asyncio
+    async def test_download_part_skip_existing(self, temp_dir):
+        """Test skipping download if part already exists with correct size."""
+        config = {'server_url': 'http://test-server:3000', 'verbose': True}
+        downloader = Downloader(config)
+        
+        base_filename = 'skip_test.zip'
+        part_index = 0
+        expected_size = 10
+        part_file = temp_dir / f'{base_filename}.{part_index}'
+        part_file.write_bytes(b'0123456789')
+        
+        mock_tracker = MagicMock()
+        
+        # Should not call httpx.AsyncClient if skipped
+        with patch('httpx.AsyncClient') as mock_client_class:
+            result = await downloader.download_part(
+                'params', 'token', part_index, temp_dir, base_filename,
+                progress_tracker=mock_tracker, expected_size=expected_size
+            )
+            
+            assert result == part_file
+            assert mock_client_class.call_count == 0
+            mock_tracker.update_progress.assert_called_once_with(expected_size, part_index + 1, 0)
 
     @pytest.mark.asyncio
     async def test_download_part_with_retry(self, temp_dir):
@@ -248,7 +274,7 @@ class TestDownloadParts:
         # Mock download_part to return immediately
         async def mock_download_part(*args, **kwargs):
             part_index = args[2]
-            part_file = temp_dir / f'part_{part_index}.tmp'
+            part_file = temp_dir / f'part_{part_index}'
             part_file.write_bytes(f'content_{part_index}'.encode())
             return part_file
         
@@ -285,7 +311,7 @@ class TestDownloadParts:
             thread_id = kwargs.get('thread_id')
             used_thread_ids.append(thread_id)
             part_index = args[2]
-            return temp_dir / f'part_{part_index}.tmp'
+            return temp_dir / f'part_{part_index}'
         
         mock_tracker = MagicMock()
         
@@ -330,9 +356,9 @@ class TestConcatenateParts:
         downloader = Downloader(config)
         
         # Create test part files
-        part1 = temp_dir / 'part_0.tmp'
-        part2 = temp_dir / 'part_1.tmp'
-        part3 = temp_dir / 'part_2.tmp'
+        part1 = temp_dir / 'part_0'
+        part2 = temp_dir / 'part_1'
+        part3 = temp_dir / 'part_2'
         
         part1.write_bytes(b'AAA')
         part2.write_bytes(b'BBB')
@@ -384,8 +410,8 @@ class TestFullDownload:
         }
         
         # Mock download_parts
-        part1 = temp_dir / 'part_0.tmp'
-        part2 = temp_dir / 'part_1.tmp'
+        part1 = temp_dir / 'part_0'
+        part2 = temp_dir / 'part_1'
         part1.write_bytes(b'PART1')
         part2.write_bytes(b'PART2')
         
@@ -419,7 +445,7 @@ class TestFullDownload:
             'parts': ['part1']
         }
         
-        part_file = temp_dir / 'part_0.tmp'
+        part_file = temp_dir / 'part_0'
         part_file.write_bytes(b'data')
         
         with patch.object(downloader, 'analyze_file', return_value=file_info):
