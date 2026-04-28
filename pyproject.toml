@@ -1,6 +1,6 @@
 [project]
-name = "acdown-client"
-version = "0.1.0"
+name = "acdown"
+version = "0.2.0"
 description = "A command-line download client for ACDown Server with chunked, authenticated downloads"
 readme = "README.md"
 requires-python = ">=3.9"

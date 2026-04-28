@@ -1,6 +1,6 @@
 """ACDown Client - A command-line download client for ACDown Server."""
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __author__ = "ACDown Team"
 
 from acdown.auth import AuthManager

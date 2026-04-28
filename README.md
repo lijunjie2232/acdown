@@ -335,7 +335,7 @@ acdown auth <new-code>
 ## Architecture
 
 ```
-acdown-client/
+acdown/
 ├── acdown/                 # Main package
 │   ├── __init__.py        # Package exports
 │   ├── cli.py             # CLI commands (Typer)
