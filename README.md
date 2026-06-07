@@ -102,19 +102,19 @@ acdown <url> [OPTIONS]
 
 ```bash
 # Basic download
-acdown https://github.com/example/app/releases/download/v1.0/app.zip
+acdown download https://github.com/example/app/releases/download/v1.0/app.zip
 
 # Custom output location
-acdown https://example.com/file.iso -o ~/Downloads/file.iso
+acdown download https://example.com/file.iso -o ~/Downloads/file.iso
 
 # High concurrency for fast connection
-acdown https://example.com/huge-file.zip -c 10
+acdown download https://example.com/huge-file.zip -c 10
 
 # Show individual progress bars for each concurrent thread
-acdown https://example.com/large-file.zip -c 5 --individual-progress
+acdown download https://example.com/large-file.zip -c 5 --individual-progress
 
 # Debug mode
-acdown https://example.com/file.zip -v
+acdown download https://example.com/file.zip -v
 ```
 
 ### Authentication
