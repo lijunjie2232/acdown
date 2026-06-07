@@ -21,7 +21,7 @@ A powerful command-line download client for ACDown Server with chunked, authenti
 - Python 3.13 or higher
 - [uv](https://github.com/astral-sh/uv) package manager (recommended)
 
-### Setup
+### Setup from source
 
 ```bash
 # Clone the repository
@@ -33,6 +33,17 @@ uv sync
 
 # Activate virtual environment (optional, uv run handles this)
 source .venv/bin/activate  # On Linux/macOS
+```
+
+### Install directly
+
+acdown client could be directly installed from pypi or using uvx
+```bash
+pip install acdown
+acdown -h
+```
+```bash
+uvx acdown -h
 ```
 
 ## Quick Start
